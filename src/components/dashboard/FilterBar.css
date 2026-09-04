@@ -1,0 +1,59 @@
+.filter-bar {
+  padding: var(--space-lg);
+  position: sticky;
+  top: 90px;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+}
+
+.filter-header h3 {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+}
+
+.btn-clear {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color var(--transition-fast);
+}
+
+.btn-clear:hover {
+  color: var(--text-primary);
+}
+
+.filter-group {
+  margin-bottom: var(--space-md);
+}
+
+.filter-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-input, .filter-select {
+  padding: 0.6rem 0.8rem;
+  font-size: var(--font-size-sm);
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .filter-bar {
+    position: static;
+    margin-bottom: var(--space-lg);
+  }
+}

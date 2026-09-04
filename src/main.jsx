@@ -5,9 +5,9 @@ import './index.css';
 import App from './App.jsx';
 import Home from './pages/Home.jsx';
 import RequestAid from './pages/RequestAid.jsx';
+import Dashboard from './pages/Dashboard.jsx';
 
 // Placeholders for future pages
-const Dashboard = () => <div className="page container empty-state"><div className="empty-state-icon">📊</div><h2>Dashboard (Coming Soon)</h2></div>;
 const Donate = () => <div className="page container empty-state"><div className="empty-state-icon">🤝</div><h2>Donate (Coming Soon)</h2></div>;
 const Volunteer = () => <div className="page container empty-state"><div className="empty-state-icon">💪</div><h2>Volunteer (Coming Soon)</h2></div>;
 
