@@ -8,7 +8,8 @@ import {
   AlertTriangle,
   AlertCircle,
   Bell,
-  Info
+  Info,
+  Users
 } from 'lucide-react';
 
 // ─── Priority Calculation ────────────────────────────────────
@@ -21,6 +22,7 @@ const CATEGORY_WEIGHTS = {
   food: 4,
   shelter: 3,
   clothing: 2,
+  volunteers: 2,
   other: 1,
 };
 
@@ -78,6 +80,7 @@ export const CATEGORY_CONFIG = {
   medicine: { label: 'Medicine', icon: <Cross size={18} />, color: '#ef4444' },
   clothing: { label: 'Clothing', icon: <Shirt size={18} />, color: '#8b5cf6' },
   shelter:  { label: 'Shelter', icon: <HomeIcon size={18} />, color: '#06b6d4' },
+  volunteers: { label: 'Volunteers / Manpower', icon: <Users size={18} />, color: '#10b981' },
   other:    { label: 'Other', icon: <HelpCircle size={18} />, color: '#6b7280' },
 };
 
