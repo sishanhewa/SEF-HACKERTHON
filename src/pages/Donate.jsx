@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { getAidRequestById } from '../lib/supabase';
-import { CATEGORY_CONFIG } from '../lib/helpers';
+import { getAidRequestById, createDonation, updateAidRequest } from '../lib/supabase';
+import { determineStatus } from '../lib/helpers';
+import { validateDonation } from '../lib/validation';
 
 export default function Donate() {
   const [searchParams] = useSearchParams();
@@ -11,7 +12,6 @@ export default function Donate() {
   const [requestDetails, setRequestDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(!!requestId);
   
-  // Dummy form state for UI phase
   const [formData, setFormData] = useState({
     donor_name: '',
     item_description: '',
@@ -19,6 +19,8 @@ export default function Donate() {
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState(null);
 
   useEffect(() => {
     async function fetchRequestDetails() {
@@ -44,18 +46,56 @@ export default function Donate() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: null }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setServerError(null);
+
+    const submissionData = {
+      ...formData,
+      request_id: requestId,
+      quantity: parseInt(formData.quantity) || 0
+    };
+
+    const { isValid, errors: validationErrors } = validateDonation(submissionData);
+    
+    if (!isValid) {
+      setErrors(validationErrors);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     setIsSubmitting(true);
     
-    // UI Phase dummy submit
-    setTimeout(() => {
-      alert('UI Phase: Donation recorded! Real submission will be added in the next step.');
-      setIsSubmitting(false);
+    try {
+      // 1. Create the donation record
+      await createDonation(submissionData);
+
+      // 2. Update the original request's fulfilled quantity
+      if (requestDetails) {
+        const newFulfilled = requestDetails.quantity_fulfilled + submissionData.quantity;
+        const newStatus = determineStatus(requestDetails.quantity_needed, newFulfilled);
+        
+        await updateAidRequest(requestId, {
+          quantity_fulfilled: newFulfilled,
+          status: newStatus
+        });
+      }
+
+      // 3. Show success and redirect
+      alert('Thank you! Your donation pledge has been recorded successfully.');
       navigate('/dashboard');
-    }, 1000);
+      
+    } catch (error) {
+      console.error("Failed to process donation:", error);
+      setServerError("Failed to process your donation. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -95,18 +135,24 @@ export default function Donate() {
               )}
 
               <form className="glass-card" onSubmit={handleSubmit}>
+                {serverError && (
+                  <div className="form-error" style={{ marginBottom: '1rem', padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', borderRadius: 'var(--radius-md)' }}>
+                    {serverError}
+                  </div>
+                )}
+
                 <div className="form-group">
                   <label htmlFor="donor_name" className="form-label">Your Name / Organization <span className="required">*</span></label>
                   <input
                     type="text"
                     id="donor_name"
                     name="donor_name"
-                    className="form-input"
-                    required
+                    className={`form-input ${errors.donor_name ? 'error' : ''}`}
                     placeholder="e.g. Rotary Club Colombo"
                     value={formData.donor_name}
                     onChange={handleChange}
                   />
+                  {errors.donor_name && <div className="form-error" style={{ color: 'var(--danger-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>{errors.donor_name}</div>}
                 </div>
 
                 <div className="form-group">
@@ -115,12 +161,12 @@ export default function Donate() {
                     type="text"
                     id="item_description"
                     name="item_description"
-                    className="form-input"
-                    required
+                    className={`form-input ${errors.item_description ? 'error' : ''}`}
                     placeholder="e.g. 5kg Rice Bags"
                     value={formData.item_description}
                     onChange={handleChange}
                   />
+                  {errors.item_description && <div className="form-error" style={{ color: 'var(--danger-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>{errors.item_description}</div>}
                 </div>
 
                 <div className="form-group">
@@ -129,13 +175,13 @@ export default function Donate() {
                     type="number"
                     id="quantity"
                     name="quantity"
-                    className="form-input"
-                    required
+                    className={`form-input ${errors.quantity ? 'error' : ''}`}
                     min="1"
                     placeholder="e.g. 10"
                     value={formData.quantity}
                     onChange={handleChange}
                   />
+                  {errors.quantity && <div className="form-error" style={{ color: 'var(--danger-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>{errors.quantity}</div>}
                 </div>
 
                 <div className="form-actions" style={{ marginTop: '2rem' }}>

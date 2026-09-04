@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { SRI_LANKAN_DISTRICTS } from '../lib/helpers';
+import { createVolunteer } from '../lib/supabase';
+import { validateVolunteer } from '../lib/validation';
 
 export default function Volunteer() {
   const [formData, setFormData] = useState({
@@ -12,21 +14,40 @@ export default function Volunteer() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: null }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setServerError(null);
+
+    const { isValid, errors: validationErrors } = validateVolunteer(formData);
+    
+    if (!isValid) {
+      setErrors(validationErrors);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     setIsSubmitting(true);
     
-    // UI Phase dummy submit
-    setTimeout(() => {
+    try {
+      await createVolunteer(formData);
       setSubmitSuccess(true);
+    } catch (error) {
+      console.error("Failed to register volunteer:", error);
+      setServerError("Failed to register. Please try again later.");
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   if (submitSuccess) {
@@ -71,6 +92,12 @@ export default function Volunteer() {
             </p>
           </div>
 
+          {serverError && (
+            <div className="form-error" style={{ marginBottom: '1rem', padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', borderRadius: 'var(--radius-md)' }}>
+              {serverError}
+            </div>
+          )}
+
           <form className="glass-card" onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="volunteer_name" className="form-label">Full Name <span className="required">*</span></label>
@@ -78,22 +105,21 @@ export default function Volunteer() {
                 type="text"
                 id="volunteer_name"
                 name="volunteer_name"
-                className="form-input"
-                required
+                className={`form-input ${errors.volunteer_name ? 'error' : ''}`}
                 placeholder="e.g. Kasun Silva"
                 value={formData.volunteer_name}
                 onChange={handleChange}
               />
+              {errors.volunteer_name && <div className="form-error" style={{ color: 'var(--danger-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>{errors.volunteer_name}</div>}
             </div>
 
             <div className="form-group">
-              <label htmlFor="contact_phone" className="form-label">Contact Number <span className="required">*</span></label>
+              <label htmlFor="contact_phone" className="form-label">Contact Number</label>
               <input
                 type="tel"
                 id="contact_phone"
                 name="contact_phone"
                 className="form-input"
-                required
                 placeholder="077 123 4567"
                 value={formData.contact_phone}
                 onChange={handleChange}
@@ -105,8 +131,7 @@ export default function Volunteer() {
               <select
                 id="district"
                 name="district"
-                className="form-select"
-                required
+                className={`form-select ${errors.district ? 'error' : ''}`}
                 value={formData.district}
                 onChange={handleChange}
               >
@@ -115,6 +140,7 @@ export default function Volunteer() {
                   <option key={district} value={district}>{district}</option>
                 ))}
               </select>
+              {errors.district && <div className="form-error" style={{ color: 'var(--danger-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>{errors.district}</div>}
             </div>
 
             <div className="form-group">
@@ -122,8 +148,7 @@ export default function Volunteer() {
               <select
                 id="availability"
                 name="availability"
-                className="form-select"
-                required
+                className={`form-select ${errors.availability ? 'error' : ''}`}
                 value={formData.availability}
                 onChange={handleChange}
               >
@@ -133,6 +158,7 @@ export default function Volunteer() {
                 <option value="evenings">Evenings only</option>
                 <option value="on-call">On-call standby</option>
               </select>
+              {errors.availability && <div className="form-error" style={{ color: 'var(--danger-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>{errors.availability}</div>}
             </div>
 
             <div className="form-group">
