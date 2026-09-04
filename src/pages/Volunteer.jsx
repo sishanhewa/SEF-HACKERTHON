@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PartyPopper, Info } from 'lucide-react';
 import { SRI_LANKAN_DISTRICTS } from '../lib/helpers';
 import { createVolunteer } from '../lib/supabase';
 import { validateVolunteer } from '../lib/validation';
@@ -56,7 +57,7 @@ export default function Volunteer() {
         <div className="container">
           <div className="form-container fade-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
             <div className="glass-card text-center" style={{ padding: '4rem 2rem' }}>
-              <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎉</div>
+              <PartyPopper size={64} style={{ color: 'var(--accent-500)', margin: '0 auto 1.5rem', display: 'block' }} />
               <h2>Thank You for Registering!</h2>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
                 Your details have been recorded. Coordinators in your district will contact you when help is needed.
@@ -85,7 +86,7 @@ export default function Volunteer() {
           
           <div className="guidance-panel glass-card" style={{ marginBottom: '2rem', background: 'rgba(16, 185, 129, 0.05)', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
             <h3 style={{ color: 'var(--accent-500)', fontSize: '1rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span>ℹ️</span> Why volunteer?
+              <Info size={18} /> Why volunteer?
             </h3>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
               Logistics and manpower are often the biggest bottlenecks in disaster relief. By registering, you help organizations coordinate delivery routes and on-ground support safely and efficiently.

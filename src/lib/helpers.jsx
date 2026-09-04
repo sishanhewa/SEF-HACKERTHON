@@ -1,3 +1,16 @@
+import { 
+  Package, 
+  Droplet, 
+  Cross, 
+  Shirt, 
+  Home as HomeIcon, 
+  HelpCircle,
+  AlertTriangle,
+  AlertCircle,
+  Bell,
+  Info
+} from 'lucide-react';
+
 // ─── Priority Calculation ────────────────────────────────────
 // Priority is determined by category urgency and quantity needed.
 // Life-critical items (medicine, water) score higher.
@@ -47,10 +60,10 @@ export function determineStatus(quantityNeeded, quantityFulfilled) {
 // ─── Priority Display Config ─────────────────────────────────
 
 export const PRIORITY_CONFIG = {
-  critical: { label: 'Critical', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.15)', icon: '🔴' },
-  high: { label: 'High', color: '#f97316', bg: 'rgba(249, 115, 22, 0.15)', icon: '🟠' },
-  medium: { label: 'Medium', color: '#eab308', bg: 'rgba(234, 179, 8, 0.15)', icon: '🟡' },
-  low: { label: 'Low', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.15)', icon: '🟢' },
+  critical: { label: 'Critical', color: 'var(--text-primary)', bg: 'var(--danger-500)', icon: <AlertTriangle size={16} /> },
+  high:     { label: 'High', color: 'var(--text-primary)', bg: 'var(--orange-500)', icon: <AlertCircle size={16} /> },
+  medium:   { label: 'Medium', color: 'var(--text-primary)', bg: 'var(--warning-500)', icon: <Bell size={16} /> },
+  low:      { label: 'Low', color: 'var(--text-primary)', bg: 'var(--accent-500)', icon: <Info size={16} /> }
 };
 
 export const STATUS_CONFIG = {
@@ -60,12 +73,12 @@ export const STATUS_CONFIG = {
 };
 
 export const CATEGORY_CONFIG = {
-  food: { label: 'Food', icon: '🍚', color: '#f59e0b' },
-  water: { label: 'Water', icon: '💧', color: '#3b82f6' },
-  medicine: { label: 'Medicine', icon: '💊', color: '#ef4444' },
-  clothing: { label: 'Clothing', icon: '👕', color: '#8b5cf6' },
-  shelter: { label: 'Shelter', icon: '🏠', color: '#06b6d4' },
-  other: { label: 'Other', icon: '📦', color: '#6b7280' },
+  food:     { label: 'Food', icon: <Package size={18} />, color: '#f59e0b' },
+  water:    { label: 'Water', icon: <Droplet size={18} />, color: '#3b82f6' },
+  medicine: { label: 'Medicine', icon: <Cross size={18} />, color: '#ef4444' },
+  clothing: { label: 'Clothing', icon: <Shirt size={18} />, color: '#8b5cf6' },
+  shelter:  { label: 'Shelter', icon: <HomeIcon size={18} />, color: '#06b6d4' },
+  other:    { label: 'Other', icon: <HelpCircle size={18} />, color: '#6b7280' },
 };
 
 // ─── Sri Lankan Districts (flood-prone areas first) ──────────

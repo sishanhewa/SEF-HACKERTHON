@@ -1,4 +1,5 @@
 import { PRIORITY_CONFIG, STATUS_CONFIG, CATEGORY_CONFIG, timeAgo } from '../../lib/helpers';
+import { MapPin } from 'lucide-react';
 import './RequestCard.css';
 
 export default function RequestCard({ request, onActionClick }) {
@@ -47,7 +48,7 @@ export default function RequestCard({ request, onActionClick }) {
         <h3 className="card-title">{item_description}</h3>
         
         <div className="card-location">
-          <span className="icon">📍</span>
+          <span className="icon"><MapPin size={14} /></span>
           <span><strong>{district}</strong> • {location_description}</span>
         </div>
 

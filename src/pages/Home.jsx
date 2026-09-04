@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { LifeBuoy, HeartHandshake, UserPlus, Waves, Lightbulb } from 'lucide-react';
 import './Home.css';
 
 export default function Home() {
@@ -17,13 +18,13 @@ export default function Home() {
             </p>
             <div className="hero-actions">
               <Link to="/request-aid" className="btn btn-primary btn-lg">
-                <span className="icon">🆘</span> I Need Help
+                <LifeBuoy size={20} className="icon-svg" /> I Need Help
               </Link>
               <Link to="/donate" className="btn btn-accent btn-lg">
-                <span className="icon">🤝</span> I Want to Donate
+                <HeartHandshake size={20} className="icon-svg" /> I Want to Donate
               </Link>
               <Link to="/volunteer" className="btn btn-outline btn-lg">
-                <span className="icon">💪</span> Volunteer
+                <UserPlus size={20} className="icon-svg" /> Volunteer
               </Link>
             </div>
           </div>
@@ -64,12 +65,16 @@ export default function Home() {
         
         <div className="problem-grid grid-2">
           <div className="problem-card glass-card">
-            <div className="problem-icon">🌊</div>
+            <div className="problem-icon" style={{ color: 'var(--primary-500)', marginBottom: '1rem' }}>
+              <Waves size={48} strokeWidth={1.5} />
+            </div>
             <h3>The Problem</h3>
             <p>During severe monsoon flooding in Sri Lanka, aid distribution becomes chaotic. Victims in hard-to-reach areas struggle to communicate their specific needs. Meanwhile, generous donors often provide items that aren't urgently required, leading to wasted resources while critical shortages remain unmet elsewhere.</p>
           </div>
           <div className="solution-card glass-card">
-            <div className="solution-icon">💡</div>
+            <div className="solution-icon" style={{ color: 'var(--accent-500)', marginBottom: '1rem' }}>
+              <Lightbulb size={48} strokeWidth={1.5} />
+            </div>
             <h3>Our Solution</h3>
             <p>FloodAid SL is a real-time platform that maps verified aid requests against available donations and volunteer resources. By calculating exact resource gaps and assigning priority levels, we ensure the right aid reaches the right people at the right time — minimizing waste and maximizing impact.</p>
           </div>
