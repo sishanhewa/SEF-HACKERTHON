@@ -90,8 +90,9 @@ export default function AidRequestForm({ onSubmit, initialData = null, isSubmitt
               type="tel"
               id="contact_phone"
               name="contact_phone"
+              maxLength="10"
               className={`form-input ${errors.contact_phone ? 'error' : ''}`}
-              placeholder="077 123 4567"
+              placeholder="0771234567"
               value={formData.contact_phone}
               onChange={handleChange}
             />
@@ -154,7 +155,7 @@ export default function AidRequestForm({ onSubmit, initialData = null, isSubmitt
             >
               <option value="">-- Select Category --</option>
               {Object.entries(CATEGORY_CONFIG).map(([key, config]) => (
-                <option key={key} value={key}>{config.icon} {config.label}</option>
+                <option key={key} value={key}>{config.label}</option>
               ))}
             </select>
             {errors.category && <div className="form-error">{errors.category}</div>}

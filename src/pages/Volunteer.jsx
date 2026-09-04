@@ -120,11 +120,13 @@ export default function Volunteer() {
                 type="tel"
                 id="contact_phone"
                 name="contact_phone"
-                className="form-input"
-                placeholder="077 123 4567"
+                maxLength="10"
+                className={`form-input ${errors.contact_phone ? 'error' : ''}`}
+                placeholder="0771234567"
                 value={formData.contact_phone}
                 onChange={handleChange}
               />
+              {errors.contact_phone && <div className="form-error" style={{ color: 'var(--danger-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>{errors.contact_phone}</div>}
             </div>
 
             <div className="form-group">

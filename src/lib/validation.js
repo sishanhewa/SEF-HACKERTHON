@@ -8,14 +8,14 @@ export function validateAidRequest(formData) {
     errors.victim_name = 'Please enter your full name (at least 2 characters)';
   }
 
-  // Contact phone — Sri Lankan format
+  // Contact phone — Sri Lankan format (10 digits starting with 0)
   if (!formData.contact_phone || formData.contact_phone.trim() === '') {
     errors.contact_phone = 'Please enter a contact phone number';
   } else {
     const phone = formData.contact_phone.replace(/[\s-]/g, '');
-    const sriLankanPhone = /^(?:\+94|0)?[0-9]{9,10}$/;
+    const sriLankanPhone = /^0\d{9}$/;
     if (!sriLankanPhone.test(phone)) {
-      errors.contact_phone = 'Please enter a valid Sri Lankan phone number (e.g. 077 1234567)';
+      errors.contact_phone = 'Please enter a valid 10-digit Sri Lankan phone number (e.g. 0771234567)';
     }
   }
 
@@ -79,6 +79,15 @@ export function validateVolunteer(formData) {
   if (!formData.volunteer_name || formData.volunteer_name.trim().length < 2) {
     errors.volunteer_name = 'Please enter your name';
   }
+  
+  if (formData.contact_phone && formData.contact_phone.trim() !== '') {
+    const phone = formData.contact_phone.replace(/[\s-]/g, '');
+    const sriLankanPhone = /^0\d{9}$/;
+    if (!sriLankanPhone.test(phone)) {
+      errors.contact_phone = 'Please enter a valid 10-digit Sri Lankan phone number (e.g. 0771234567)';
+    }
+  }
+
   if (!formData.district || formData.district === '') {
     errors.district = 'Please select your district';
   }
