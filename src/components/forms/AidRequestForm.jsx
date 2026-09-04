@@ -1,7 +1,26 @@
 import { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
 import { SRI_LANKAN_DISTRICTS, CATEGORY_CONFIG, calculatePriority, PRIORITY_CONFIG } from '../../lib/helpers';
 import { validateAidRequest } from '../../lib/validation';
 import './AidRequestForm.css';
+
+// Fix for default marker icons in React-Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+function LocationPicker({ position, setPosition }) {
+  useMapEvents({
+    click(e) {
+      setPosition(e.latlng);
+    },
+  });
+  return position ? <Marker position={position} /> : null;
+}
 
 export default function AidRequestForm({ onSubmit, initialData = null, isSubmitting = false }) {
   const [formData, setFormData] = useState({
@@ -9,6 +28,8 @@ export default function AidRequestForm({ onSubmit, initialData = null, isSubmitt
     contact_phone: '',
     district: '',
     location_description: '',
+    latitude: '',
+    longitude: '',
     category: '',
     item_description: '',
     quantity_needed: '',
@@ -16,6 +37,7 @@ export default function AidRequestForm({ onSubmit, initialData = null, isSubmitt
 
   const [priority, setPriority] = useState('low');
   const [errors, setErrors] = useState({});
+  const centerSriLanka = [7.8731, 80.7718];
 
   useEffect(() => {
     if (initialData) {
@@ -36,6 +58,17 @@ export default function AidRequestForm({ onSubmit, initialData = null, isSubmitt
     // Clear error when typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
+    }
+  };
+
+  const handleMapClick = (latlng) => {
+    setFormData((prev) => ({
+      ...prev,
+      latitude: latlng.lat,
+      longitude: latlng.lng
+    }));
+    if (errors.coordinates) {
+      setErrors((prev) => ({ ...prev, coordinates: null }));
     }
   };
 
@@ -135,6 +168,24 @@ export default function AidRequestForm({ onSubmit, initialData = null, isSubmitt
             rows="3"
           ></textarea>
           {errors.location_description && <div className="form-error">{errors.location_description}</div>}
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Pin Location on Map <span className="required">*</span></label>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Click on the map to place a pin at your exact location.</p>
+          <div style={{ height: '300px', width: '100%', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: errors.coordinates ? '2px solid var(--danger-500)' : '1px solid var(--border-color)' }}>
+            <MapContainer center={centerSriLanka} zoom={7} style={{ height: '100%', width: '100%' }}>
+              <TileLayer
+                attribution='&copy; OpenStreetMap'
+                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              />
+              <LocationPicker 
+                position={formData.latitude && formData.longitude ? [formData.latitude, formData.longitude] : null} 
+                setPosition={handleMapClick} 
+              />
+            </MapContainer>
+          </div>
+          {errors.coordinates && <div className="form-error" style={{ marginTop: '0.5rem' }}>{errors.coordinates}</div>}
         </div>
       </div>
 

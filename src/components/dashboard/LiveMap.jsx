@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import ReactDOMServer from 'react-dom/server';
 import { CATEGORY_CONFIG, PRIORITY_CONFIG } from '../../lib/helpers';
+import { Package } from 'lucide-react';
 import './LiveMap.css';
 
 // Fix for default marker icons in React-Leaflet
@@ -15,12 +17,15 @@ L.Icon.Default.mergeOptions({
 // Custom markers based on priority
 const createCustomIcon = (priority, category) => {
   const color = PRIORITY_CONFIG[priority]?.color || '#3b82f6';
-  const icon = CATEGORY_CONFIG[category]?.icon || '📦';
+  const IconComponent = CATEGORY_CONFIG[category]?.icon || <Package size={18} />;
+  
+  // Render the Lucide React component to an HTML string
+  const iconHtml = ReactDOMServer.renderToString(IconComponent);
   
   return L.divIcon({
     className: 'custom-map-marker',
     html: `<div class="marker-pin" style="background-color: ${color}; box-shadow: 0 0 10px ${color}">
-             <span class="marker-emoji">${icon}</span>
+             <span class="marker-emoji" style="display: flex; align-items: center; justify-content: center; height: 100%; color: white;">${iconHtml}</span>
            </div>`,
     iconSize: [30, 30],
     iconAnchor: [15, 30],

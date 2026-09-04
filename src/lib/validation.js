@@ -28,6 +28,11 @@ export function validateAidRequest(formData) {
   if (!formData.location_description || formData.location_description.trim().length < 5) {
     errors.location_description = 'Please describe your location (at least 5 characters)';
   }
+  
+  // Map coordinates
+  if (!formData.latitude || !formData.longitude) {
+    errors.coordinates = 'Please select your location on the map';
+  }
 
   // Category
   if (!formData.category || formData.category === '') {
