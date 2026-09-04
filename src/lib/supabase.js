@@ -92,3 +92,13 @@ export async function getVolunteers(filters = {}) {
   if (error) throw error;
   return data;
 }
+
+export async function getVolunteerById(id) {
+  const { data, error } = await supabase
+    .from('volunteers')
+    .select('*')
+    .eq('id', id)
+    .single();
+  if (error) throw error;
+  return data;
+}

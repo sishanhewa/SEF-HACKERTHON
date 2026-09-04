@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { PartyPopper, Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Info } from 'lucide-react';
 import { SRI_LANKAN_DISTRICTS } from '../lib/helpers';
 import { createVolunteer } from '../lib/supabase';
 import { validateVolunteer } from '../lib/validation';
 
 export default function Volunteer() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     volunteer_name: '',
     contact_phone: '',
@@ -14,7 +16,6 @@ export default function Volunteer() {
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState(null);
 
@@ -41,8 +42,9 @@ export default function Volunteer() {
     setIsSubmitting(true);
     
     try {
-      await createVolunteer(formData);
-      setSubmitSuccess(true);
+      const newVolunteer = await createVolunteer(formData);
+      // Redirect to the personalized dashboard
+      navigate(`/volunteer-dashboard/${newVolunteer.id}`);
     } catch (error) {
       console.error("Failed to register volunteer:", error);
       setServerError("Failed to register. Please try again later.");
@@ -50,27 +52,6 @@ export default function Volunteer() {
       setIsSubmitting(false);
     }
   };
-
-  if (submitSuccess) {
-    return (
-      <div className="page volunteer-page">
-        <div className="container">
-          <div className="form-container fade-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
-            <div className="glass-card text-center" style={{ padding: '4rem 2rem' }}>
-              <PartyPopper size={64} style={{ color: 'var(--accent-500)', margin: '0 auto 1.5rem', display: 'block' }} />
-              <h2>Thank You for Registering!</h2>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-                Your details have been recorded. Coordinators in your district will contact you when help is needed.
-              </p>
-              <a href="/dashboard" className="btn btn-primary">
-                Return to Dashboard
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="page volunteer-page">

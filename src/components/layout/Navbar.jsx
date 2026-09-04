@@ -12,7 +12,7 @@ export default function Navbar() {
     { to: '/dashboard', label: 'Dashboard', icon: <BarChart2 size={18} /> },
     { to: '/request-aid', label: 'Request Aid', icon: <LifeBuoy size={18} /> },
     { to: '/donate', label: 'Donate', icon: <HeartHandshake size={18} /> },
-    { to: '/volunteer', label: 'Volunteer', icon: <UserPlus size={18} /> },
+    { to: '/volunteers', label: 'Volunteers', icon: <UserPlus size={18} /> },
   ];
 
   return (
