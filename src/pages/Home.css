@@ -1,0 +1,146 @@
+.hero-section {
+  position: relative;
+  padding: var(--space-3xl) 0 var(--space-2xl);
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: var(--font-size-5xl);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: var(--space-lg);
+  letter-spacing: -0.02em;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary-400), var(--accent-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-accent {
+  color: var(--accent-400);
+}
+
+.hero-subtitle {
+  font-size: var(--font-size-xl);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2xl);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero-bg-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  height: 80vw;
+  background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(10,15,28,0) 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Stats Section */
+.stats-section {
+  position: relative;
+  z-index: 10;
+  margin-top: -3rem;
+  margin-bottom: var(--space-3xl);
+}
+
+.stat-card {
+  text-align: center;
+  padding: var(--space-lg);
+}
+
+.stat-value {
+  font-size: var(--font-size-4xl);
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: var(--space-sm);
+  color: var(--text-primary);
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Problem Section */
+.problem-section {
+  margin-bottom: var(--space-3xl);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.section-header {
+  margin-bottom: var(--space-2xl);
+}
+
+.problem-icon, .solution-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-md);
+}
+
+.problem-card h3, .solution-card h3 {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+.problem-card p, .solution-card p {
+  color: var(--text-secondary);
+  font-size: var(--font-size-md);
+}
+
+.solution-card {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.05) 0%, var(--bg-glass) 100%);
+}
+
+/* Map CTA */
+.map-cta-section {
+  margin-bottom: var(--space-3xl);
+}
+
+.map-cta-card {
+  background: linear-gradient(135deg, rgba(30,58,138,0.4) 0%, var(--bg-glass) 100%);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.map-cta-card h2 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-sm);
+}
+
+.map-cta-card p {
+  color: var(--text-secondary);
+  font-size: var(--font-size-lg);
+}
