@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { SRI_LANKAN_DISTRICTS, CATEGORY_CONFIG, calculatePriority, PRIORITY_CONFIG } from '../../lib/helpers';
+import { validateAidRequest } from '../../lib/validation';
 import './AidRequestForm.css';
 
-export default function AidRequestForm({ onSubmit, initialData = null }) {
+export default function AidRequestForm({ onSubmit, initialData = null, isSubmitting = false }) {
   const [formData, setFormData] = useState({
     victim_name: '',
     contact_phone: '',
@@ -14,8 +15,6 @@ export default function AidRequestForm({ onSubmit, initialData = null }) {
   });
 
   const [priority, setPriority] = useState('low');
-  
-  // This would come from validation in Step 4, keeping it simple for UI structure now
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -42,8 +41,24 @@ export default function AidRequestForm({ onSubmit, initialData = null }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Validate form
+    const { isValid, errors: validationErrors } = validateAidRequest(formData);
+    
+    if (!isValid) {
+      setErrors(validationErrors);
+      // Scroll to first error (simple implementation)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     if (onSubmit) {
-      onSubmit(formData);
+      // Include calculated priority
+      onSubmit({
+        ...formData,
+        priority: calculatePriority(formData.category, parseInt(formData.quantity_needed)),
+        quantity_needed: parseInt(formData.quantity_needed)
+      });
     }
   };
 
@@ -193,8 +208,8 @@ export default function AidRequestForm({ onSubmit, initialData = null }) {
       </div>
 
       <div className="form-actions">
-        <button type="submit" className="btn btn-primary btn-lg submit-btn">
-          Submit Aid Request
+        <button type="submit" className="btn btn-primary btn-lg submit-btn" disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit Aid Request'}
         </button>
       </div>
     </form>
