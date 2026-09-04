@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getVolunteers } from '../lib/supabase';
-import { User, MapPin, Clock, Wrench } from 'lucide-react';
+import { User, MapPin, Clock, Wrench, Phone } from 'lucide-react';
 import { SRI_LANKAN_DISTRICTS } from '../lib/helpers';
 
 export default function VolunteersList() {
@@ -73,6 +73,11 @@ export default function VolunteersList() {
                 </div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.875rem' }}>
+                  {volunteer.contact_phone && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
+                      <Phone size={16} /> <a href={`tel:${volunteer.contact_phone}`} style={{ color: 'var(--accent-500)', textDecoration: 'none' }}>{volunteer.contact_phone}</a>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
                     <MapPin size={16} /> <span>{volunteer.district}</span>
                   </div>
