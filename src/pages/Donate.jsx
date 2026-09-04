@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { getAidRequestById, createDonation, updateAidRequest } from '../lib/supabase';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { getAidRequestById, createDonation, updateAidRequest, getAidRequests } from '../lib/supabase';
 import { determineStatus } from '../lib/helpers';
 import { validateDonation } from '../lib/validation';
 
 export default function Donate() {
   const [searchParams] = useSearchParams();
-  const requestId = searchParams.get('request');
+  const initialRequestId = searchParams.get('request');
   const navigate = useNavigate();
   
+  const [selectedRequestId, setSelectedRequestId] = useState(initialRequestId || '');
   const [requestDetails, setRequestDetails] = useState(null);
-  const [isLoading, setIsLoading] = useState(!!requestId);
+  const [availableRequests, setAvailableRequests] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   const [formData, setFormData] = useState({
     donor_name: '',
@@ -22,13 +24,37 @@ export default function Donate() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState(null);
 
+  // Fetch available requests for the dropdown if no specific request is selected
+  useEffect(() => {
+    async function fetchAvailableRequests() {
+      try {
+        const data = await getAidRequests();
+        // Filter out fully fulfilled ones
+        const active = data.filter(req => req.status !== 'fulfilled');
+        setAvailableRequests(active);
+      } catch (err) {
+        console.error("Failed to load requests", err);
+      } finally {
+        if (!selectedRequestId) {
+          setIsLoading(false);
+        }
+      }
+    }
+    fetchAvailableRequests();
+  }, [selectedRequestId]);
+
+  // Fetch specific request details when a request is selected (via URL or dropdown)
   useEffect(() => {
     async function fetchRequestDetails() {
-      if (!requestId) return;
+      if (!selectedRequestId) {
+        setRequestDetails(null);
+        setFormData(prev => ({ ...prev, item_description: '', quantity: '' }));
+        return;
+      }
+      setIsLoading(true);
       try {
-        const data = await getAidRequestById(requestId);
+        const data = await getAidRequestById(selectedRequestId);
         setRequestDetails(data);
-        // Pre-fill what we can
         setFormData(prev => ({
           ...prev,
           item_description: data.item_description,
@@ -41,7 +67,7 @@ export default function Donate() {
       }
     }
     fetchRequestDetails();
-  }, [requestId]);
+  }, [selectedRequestId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,13 +77,20 @@ export default function Donate() {
     }
   };
 
+  const handleRequestSelection = (e) => {
+    setSelectedRequestId(e.target.value);
+    if (errors.request_id) {
+      setErrors(prev => ({ ...prev, request_id: null }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError(null);
 
     const submissionData = {
       ...formData,
-      request_id: requestId,
+      request_id: selectedRequestId,
       quantity: parseInt(formData.quantity) || 0
     };
 
@@ -72,21 +105,18 @@ export default function Donate() {
     setIsSubmitting(true);
     
     try {
-      // 1. Create the donation record
       await createDonation(submissionData);
 
-      // 2. Update the original request's fulfilled quantity
       if (requestDetails) {
         const newFulfilled = requestDetails.quantity_fulfilled + submissionData.quantity;
         const newStatus = determineStatus(requestDetails.quantity_needed, newFulfilled);
         
-        await updateAidRequest(requestId, {
+        await updateAidRequest(selectedRequestId, {
           quantity_fulfilled: newFulfilled,
           status: newStatus
         });
       }
 
-      // 3. Show success and redirect
       alert('Thank you! Your donation pledge has been recorded successfully.');
       navigate('/dashboard');
       
@@ -114,22 +144,40 @@ export default function Donate() {
             <div className="text-center" style={{ padding: '2rem' }}>Loading request details...</div>
           ) : (
             <>
-              {requestDetails ? (
+              {!selectedRequestId ? (
                 <div className="glass-card" style={{ marginBottom: '2rem', background: 'rgba(59, 130, 246, 0.05)', borderColor: 'rgba(59, 130, 246, 0.2)' }}>
-                  <h3 style={{ fontSize: '1rem', color: 'var(--primary-400)', marginBottom: '0.5rem' }}>You are donating to:</h3>
+                  <h3 style={{ fontSize: '1rem', color: 'var(--primary-500)', marginBottom: '0.75rem' }}>Please select a request to donate to:</h3>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <select
+                      className={`form-select ${errors.request_id ? 'error' : ''}`}
+                      value={selectedRequestId}
+                      onChange={handleRequestSelection}
+                    >
+                      <option value="">-- Browse Active Requests --</option>
+                      {availableRequests.map(req => (
+                        <option key={req.id} value={req.id}>
+                          {req.item_description} ({req.district}) - Needs {req.quantity_needed - req.quantity_fulfilled}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.request_id && <div className="form-error" style={{ color: 'var(--danger-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>{errors.request_id}</div>}
+                  </div>
+                </div>
+              ) : requestDetails && (
+                <div className="glass-card" style={{ marginBottom: '2rem', background: 'rgba(16, 185, 129, 0.05)', borderColor: 'rgba(16, 185, 129, 0.2)', position: 'relative' }}>
+                  <button 
+                    onClick={() => setSelectedRequestId('')}
+                    style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.875rem', textDecoration: 'underline' }}
+                  >
+                    Change Request
+                  </button>
+                  <h3 style={{ fontSize: '1rem', color: 'var(--accent-600)', marginBottom: '0.5rem' }}>You are donating to:</h3>
                   <p style={{ fontWeight: '600', marginBottom: '0.25rem' }}>{requestDetails.item_description}</p>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                     📍 {requestDetails.district} • {requestDetails.location_description}
                   </p>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
                     <strong>Remaining needed:</strong> {requestDetails.quantity_needed - requestDetails.quantity_fulfilled} units
-                  </p>
-                </div>
-              ) : (
-                <div className="glass-card" style={{ marginBottom: '2rem', background: 'rgba(245, 158, 11, 0.05)', borderColor: 'rgba(245, 158, 11, 0.2)' }}>
-                  <p style={{ color: 'var(--warning-500)', fontSize: '0.875rem' }}>
-                    ⚠️ You haven't selected a specific request to donate to. 
-                    We recommend <a href="/dashboard" style={{ textDecoration: 'underline' }}>visiting the dashboard</a> to select a specific need.
                   </p>
                 </div>
               )}
