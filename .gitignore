@@ -25,3 +25,5 @@ dist-ssr
 
 # Documentation (not for repo)
 *.md
+!README.md
+
