@@ -1,0 +1,37 @@
+.request-aid-page {
+  background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.05) 0%, rgba(10, 15, 28, 0) 50%);
+}
+
+.form-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.guidance-panel {
+  margin-bottom: var(--space-xl);
+  background: rgba(245, 158, 11, 0.05); /* subtle warning/orange tint */
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.guidance-panel h3 {
+  color: var(--warning-500);
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.guidance-panel ul {
+  padding-left: var(--space-xl);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.guidance-panel li {
+  margin-bottom: var(--space-xs);
+}
+
+.guidance-panel li:last-child {
+  margin-bottom: 0;
+}
