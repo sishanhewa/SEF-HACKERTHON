@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Home, BarChart2, LifeBuoy, HeartHandshake, UserPlus, Waves } from 'lucide-react';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -7,18 +8,18 @@ export default function Navbar() {
   const location = useLocation();
 
   const links = [
-    { to: '/', label: 'Home', icon: '🏠' },
-    { to: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { to: '/request-aid', label: 'Request Aid', icon: '🆘' },
-    { to: '/donate', label: 'Donate', icon: '🤝' },
-    { to: '/volunteer', label: 'Volunteer', icon: '💪' },
+    { to: '/', label: 'Home', icon: <Home size={18} /> },
+    { to: '/dashboard', label: 'Dashboard', icon: <BarChart2 size={18} /> },
+    { to: '/request-aid', label: 'Request Aid', icon: <LifeBuoy size={18} /> },
+    { to: '/donate', label: 'Donate', icon: <HeartHandshake size={18} /> },
+    { to: '/volunteer', label: 'Volunteer', icon: <UserPlus size={18} /> },
   ];
 
   return (
     <nav className="navbar" id="main-navbar">
       <div className="navbar-container container">
         <Link to="/" className="navbar-brand" id="nav-brand">
-          <span className="brand-icon">🌊</span>
+          <Waves size={24} className="brand-icon" style={{ color: 'var(--primary-500)', marginRight: '8px' }} />
           <span className="brand-text">FloodAid<span className="brand-accent">SL</span></span>
         </Link>
 
@@ -42,7 +43,7 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                 id={`nav-link-${link.label.toLowerCase().replace(/\s/g, '-')}`}
               >
-                <span className="nav-icon">{link.icon}</span>
+                <span className="nav-icon" style={{ display: 'flex', alignItems: 'center' }}>{link.icon}</span>
                 {link.label}
               </Link>
             </li>
